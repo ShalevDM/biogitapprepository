@@ -1,0 +1,4 @@
+LINE #####1.txt#####
+XXXXXX
+YYYYYY
+ZZZZZZ
