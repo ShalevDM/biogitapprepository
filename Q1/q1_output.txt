@@ -1,0 +1,7 @@
+Time : Tue Feb 18 13:55:16 IST 2025
+USER DETAILS: shalev_doron:x:1000:1000:,,,:/home/shalev_doron:/bin/bash
+REPO:/home/shalev_doron/Linux_Curse_work/Q1
+BRANCH: question_1
+VERSIONID: "24.04"
+---------------------------------------------------------------------------
+./q1_output.txt
