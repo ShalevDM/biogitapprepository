@@ -13,6 +13,8 @@ from scientific articles about *Danio rerio* spatial transcriptomics.
   - biological markers (with dpf, tissue, cell type, expression)
   - cell types (with dpf, size in µm, anatomical location)
 - **Browse + filter** markers and cells by age (dpf); export CSV.
+- **ZFIN sync** — bulk-import zebrafish gene expression and anatomy from
+  ZFIN's public download files, with stages auto-converted to dpf.
 
 ## Stack
 

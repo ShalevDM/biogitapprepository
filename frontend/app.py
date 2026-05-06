@@ -16,6 +16,7 @@ Use the pages in the sidebar:
 - **Markers** — biological markers organised by age (dpf).
 - **Cell Atlas** — cell sizes and anatomical locations by age (dpf).
 - **Settings** — Claude API key and institutional proxy configuration.
+- **ZFIN** — bulk-import gene expression and anatomy data from ZFIN.
 """
 )
 

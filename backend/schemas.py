@@ -70,3 +70,15 @@ class SearchHit(BaseModel):
 class SettingIn(BaseModel):
     key: str
     value: Optional[str] = None
+
+
+class ZfinSyncIn(BaseModel):
+    limit: Optional[int] = 5000
+    genes: Optional[List[str]] = None
+
+
+class ZfinSyncOut(BaseModel):
+    markers_imported: int
+    cells_imported: int
+    stages_loaded: int
+    article_id: int

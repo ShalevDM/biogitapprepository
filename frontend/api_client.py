@@ -95,3 +95,12 @@ def set_setting(key: str, value: str | None):
         r = c.put("/settings", json={"key": key, "value": value})
         r.raise_for_status()
         return r.json()
+
+
+def zfin_sync(limit: int | None = 5000, genes: list[str] | None = None):
+    payload = {"limit": limit, "genes": genes}
+    with httpx.Client(base_url=base_url(), timeout=600.0) as c:
+        r = c.post("/zfin/sync", json=payload)
+        if r.status_code >= 400:
+            return {"error": r.json().get("detail", r.text)}
+        return r.json()

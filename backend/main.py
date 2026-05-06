@@ -5,7 +5,7 @@ from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Query
 from sqlalchemy.orm import Session
 
-from . import models, schemas, pubmed, extraction, pdf_utils
+from . import models, schemas, pubmed, extraction, pdf_utils, zfin
 from .database import Base, engine, get_db, DATA_DIR
 
 Base.metadata.create_all(bind=engine)
@@ -198,3 +198,81 @@ def get_setting(key: str, db: Session = Depends(get_db)):
 def put_setting(payload: schemas.SettingIn, db: Session = Depends(get_db)):
     _set_setting(db, payload.key, payload.value)
     return {"ok": True}
+
+
+ZFIN_ARTICLE_TITLE = "ZFIN Database (zfin.org)"
+
+
+def _ensure_zfin_article(db: Session) -> models.Article:
+    a = (
+        db.query(models.Article)
+        .filter(models.Article.source == "zfin", models.Article.title == ZFIN_ARTICLE_TITLE)
+        .first()
+    )
+    if a:
+        return a
+    a = models.Article(
+        title=ZFIN_ARTICLE_TITLE,
+        authors="Zebrafish Information Network",
+        journal="ZFIN bulk downloads",
+        source="zfin",
+    )
+    db.add(a)
+    db.commit()
+    db.refresh(a)
+    return a
+
+
+@app.post("/zfin/sync", response_model=schemas.ZfinSyncOut)
+def zfin_sync(payload: schemas.ZfinSyncIn, db: Session = Depends(get_db)):
+    article = _ensure_zfin_article(db)
+    db.query(models.Marker).filter(models.Marker.article_id == article.id).delete()
+    db.query(models.CellRecord).filter(models.CellRecord.article_id == article.id).delete()
+
+    stage_map = zfin.load_stage_to_dpf()
+    records = zfin.fetch_expression_records(
+        stage_map, limit=payload.limit, gene_filter=payload.genes
+    )
+
+    seen_anatomy: set = set()
+    n_markers = n_cells = 0
+    for rec in records:
+        dpf = None
+        if rec["dpf_min"] is not None and rec["dpf_max"] is not None:
+            dpf = (rec["dpf_min"] + rec["dpf_max"]) / 2.0
+        elif rec["dpf_min"] is not None:
+            dpf = rec["dpf_min"]
+
+        anatomy = rec["sub_structure"] or rec["super_structure"]
+        if rec["gene_symbol"]:
+            db.add(models.Marker(
+                article_id=article.id,
+                marker_name=rec["gene_symbol"],
+                dpf=dpf,
+                tissue=anatomy,
+                expression="reported (ZFIN)",
+                notes=f"ZFIN {rec['gene_id']}".strip(),
+            ))
+            n_markers += 1
+
+        if anatomy:
+            key = (anatomy, dpf)
+            if key not in seen_anatomy:
+                seen_anatomy.add(key)
+                db.add(models.CellRecord(
+                    article_id=article.id,
+                    cell_type=anatomy,
+                    dpf=dpf,
+                    location=rec["super_structure"],
+                    notes="ZFIN anatomy expression site",
+                ))
+                n_cells += 1
+
+    article.extracted_at = datetime.utcnow()
+    db.commit()
+    return schemas.ZfinSyncOut(
+        markers_imported=n_markers,
+        cells_imported=n_cells,
+        stages_loaded=len(stage_map),
+        article_id=article.id,
+    )
