@@ -1,0 +1,176 @@
+:root {
+  --rek: #f6f7f9;
+  --mishtach: #ffffff;
+  --kav: #d9dde3;
+  --tekst: #1d2330;
+  --chalash: #5d6677;
+  --ikari: #1f5fbf;
+  --ikari-bahir: #e6effc;
+  --pas-cham: #f8d9c4;
+  --hachanot: #d8ecd2;
+  --pas-kar: #d3e6f5;
+  --minhal: #e9dcf3;
+  --hafara: #c62828;
+  --hafara-rek: #fdecea;
+  --azhara: #b26a00;
+  --azhara-rek: #fff4e0;
+  --tov: #2e7d32;
+  --tov-rek: #e8f5e9;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, "Segoe UI", Arial, "Noto Sans Hebrew", sans-serif;
+  background: var(--rek);
+  color: var(--tekst);
+  font-size: 15px;
+}
+.rosh {
+  display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  background: #18315c; color: #fff; padding: 10px 16px;
+}
+.shem-app { font-weight: 700; font-size: 18px; }
+nav { display: flex; gap: 4px; flex-wrap: wrap; }
+nav a { color: #dce6f7; text-decoration: none; padding: 6px 10px; border-radius: 6px; }
+nav a.pail, nav a:hover { background: rgba(255,255,255,.15); color: #fff; }
+main { padding: 16px; max-width: 1600px; margin: 0 auto; }
+h1 { font-size: 22px; margin: 0 0 12px; }
+h2 { font-size: 17px; margin: 18px 0 8px; }
+.kartis { background: var(--mishtach); border: 1px solid var(--kav); border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+.shura { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.shura + .shura { margin-top: 8px; }
+.revach { flex: 1; }
+.chalash { color: var(--chalash); font-size: 13px; }
+button, .kaftor {
+  font: inherit; border: 1px solid var(--kav); background: #fff; color: var(--tekst);
+  padding: 6px 12px; border-radius: 6px; cursor: pointer;
+}
+button:hover { background: #f0f2f5; }
+button.ikari { background: var(--ikari); color: #fff; border-color: var(--ikari); }
+button.ikari:hover { background: #184c99; }
+button.sakana { color: var(--hafara); border-color: #e7b4b4; }
+button:disabled { opacity: .5; cursor: default; }
+input, select, textarea { font: inherit; padding: 5px 8px; border: 1px solid var(--kav); border-radius: 6px; background: #fff; }
+input[type=number] { width: 80px; }
+input[type=checkbox] { width: 16px; height: 16px; vertical-align: middle; }
+textarea { width: 100%; min-height: 110px; }
+label { cursor: pointer; }
+table { border-collapse: collapse; width: 100%; background: #fff; }
+th, td { border-bottom: 1px solid var(--kav); padding: 6px 8px; text-align: right; vertical-align: top; }
+th { background: #eef1f5; font-weight: 600; position: sticky; top: 0; }
+tr.chaser td { background: var(--hafara-rek); }
+.tag { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 10px; background: #eef1f5; color: #3b4456; margin-inline-start: 3px; white-space: nowrap; }
+.tag.tafkid-shef { background: #ffe1c2; }
+.tag.tafkid-minhalan { background: #e8dbf6; }
+.tag.bechofesh { background: #ffd6d6; color: #8a1c1c; }
+.tag.murchevet { background: var(--tov-rek); color: var(--tov); }
+
+/* מצב */
+.matzav { border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; border: 1px solid; }
+.matzav.ragil { background: var(--tov-rek); border-color: #a5d6a7; }
+.matzav.choser { background: var(--azhara-rek); border-color: #f0c27b; }
+.matzav.cherum { background: var(--hafara-rek); border-color: #ef9a9a; }
+.matzav .koteret { font-weight: 700; font-size: 17px; }
+.matzav ul { margin: 6px 0 0; padding-inline-start: 20px; }
+.hatraa {
+  background: var(--hafara); color: #fff; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px;
+  box-shadow: 0 2px 10px rgba(198,40,40,.35);
+}
+.hatraa .koteret { font-size: 18px; font-weight: 700; }
+.hatraa ul { margin: 6px 0 0; padding-inline-start: 20px; }
+
+/* ציר זמן */
+.tzir-otef { overflow-x: auto; background: #fff; border: 1px solid var(--kav); border-radius: 10px; }
+.tzir {
+  display: grid; min-width: 1350px;
+  grid-template-columns: 110px repeat(24, minmax(50px, 1fr));
+  grid-auto-rows: minmax(40px, auto);
+}
+.tzir .shaa { font-size: 12px; color: var(--chalash); border-inline-start: 1px solid #edf0f3; padding: 4px; text-align: center; background: #fafbfc; position: sticky; top: 0; }
+.tzir .tavit-shura { font-weight: 600; padding: 8px; background: #fafbfc; border-top: 1px solid var(--kav); position: sticky; right: 0; z-index: 1; }
+.tzir .reka { border-top: 1px solid var(--kav); border-inline-start: 1px solid #f1f3f6; }
+.block {
+  margin: 3px 2px; border-radius: 8px; padding: 4px; border: 1px solid rgba(0,0,0,.1); z-index: 0;
+  display: flex; flex-direction: column; gap: 3px; min-width: 0;
+}
+.block .zman { font-size: 11px; color: #3c4454; display: flex; justify-content: space-between; gap: 4px; }
+.block.pas_cham { background: var(--pas-cham); }
+.block.hachanot { background: var(--hachanot); }
+.block.pas_kar { background: var(--pas-kar); }
+.block.minhal { background: var(--minhal); }
+.chip {
+  background: #fff; border: 1px solid #c9ced6; border-radius: 6px; padding: 2px 6px; font-size: 13px;
+  cursor: grab; display: flex; align-items: center; gap: 4px; min-height: 24px; overflow: hidden; white-space: nowrap;
+}
+.chip:hover { border-color: var(--ikari); }
+.chip.shef { font-weight: 700; }
+.chip.chaser { background: var(--hafara-rek); border: 1px dashed var(--hafara); color: var(--hafara); }
+.chip.hafara { border: 2px solid var(--hafara); }
+.chip.azhara { border-color: var(--azhara); box-shadow: inset 0 0 0 1px var(--azhara); }
+.chip.naul::after { content: "🔒"; font-size: 11px; }
+.chip.butza { opacity: .7; }
+.chip.yadani { background: #fffbe6; }
+.chip.over { outline: 3px solid var(--ikari); }
+.chip.madgash { outline: 3px solid #ffb300; }
+.chip .tg { font-size: 10px; color: var(--chalash); }
+
+.paneli { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+@media (max-width: 900px) { .paneli { grid-template-columns: 1fr; } }
+.reshima { list-style: none; margin: 0; padding: 0; max-height: 320px; overflow: auto; }
+.reshima li { padding: 5px 8px; border-bottom: 1px solid #eef0f3; cursor: pointer; font-size: 14px; }
+.reshima li:hover { background: #f5f7fa; }
+.reshima.hafarot li { color: var(--hafara); }
+.reshima.azharot li { color: #7a4900; }
+
+.maagar-ovdim { display: flex; flex-wrap: wrap; gap: 4px; }
+.maagar-ovdim .chip { cursor: grab; }
+
+/* לפי עובד */
+.oved-tzir { display: grid; min-width: 1350px; grid-template-columns: 170px repeat(24, minmax(48px, 1fr)) 70px; }
+.oved-tzir > div { border-bottom: 1px solid #eef0f3; min-height: 30px; }
+.oved-tzir .tavit-shura { padding: 5px 8px; position: sticky; right: 0; background: #fafbfc; z-index: 1; font-size: 13px; }
+.oved-tzir .bar { margin: 4px 1px; border-radius: 5px; font-size: 11px; padding: 2px 4px; overflow: hidden; white-space: nowrap; cursor: pointer; }
+.oved-tzir .bar.pas_cham { background: var(--pas-cham); }
+.oved-tzir .bar.hachanot { background: var(--hachanot); }
+.oved-tzir .bar.pas_kar { background: var(--pas-kar); }
+.oved-tzir .bar.minhal { background: var(--minhal); }
+.oved-tzir .sach { font-size: 12px; padding: 6px; text-align: center; }
+.oved-tzir .kotar { font-weight: 700; background: #eef1f5; padding: 4px 8px; grid-column: 1 / -1; }
+
+/* דיאלוג */
+dialog { border: 1px solid var(--kav); border-radius: 12px; padding: 0; max-width: 680px; width: 94vw; }
+dialog::backdrop { background: rgba(10,20,40,.35); }
+.dialog-guf { padding: 16px; max-height: 80vh; overflow: auto; }
+.dialog-tachtit { display: flex; gap: 8px; justify-content: flex-start; padding: 10px 16px; border-top: 1px solid var(--kav); background: #fafbfc; }
+.nimuk { background: var(--ikari-bahir); border-radius: 8px; padding: 10px; margin: 8px 0; }
+
+.hodaa { position: fixed; bottom: 18px; left: 18px; background: #18315c; color: #fff; padding: 10px 16px; border-radius: 8px; z-index: 50; max-width: 420px; }
+.hodaa.shgia { background: var(--hafara); }
+
+.chips-nochechut { columns: 4 220px; column-gap: 16px; }
+.chips-nochechut label { display: block; padding: 3px 0; break-inside: avoid; }
+.kvutza { break-inside: avoid; margin-bottom: 10px; }
+.kvutza h3 { font-size: 14px; margin: 6px 0 4px; color: var(--chalash); }
+
+.tzevet-kartis { border: 1px solid var(--kav); border-radius: 8px; padding: 10px; background: #fcfcfd; }
+.tzvatim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.tzevet-kartis select { width: 100%; margin-top: 4px; }
+
+.hagdarot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; }
+.hagdarot-grid .kartis { margin: 0; }
+.sade { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 0; }
+
+.paar-shlili { color: var(--hafara); font-weight: 700; }
+.paar-chiyuvi { color: var(--tov); }
+
+/* הדפסה */
+.hadpasa h1 { font-size: 20px; }
+.hadpasa table { margin-bottom: 14px; font-size: 13px; }
+.hadpasa th, .hadpasa td { border: 1px solid #999; }
+@media print {
+  .rosh, .lo-lehadpasa, .hodaa { display: none !important; }
+  body { background: #fff; }
+  main { padding: 0; max-width: none; }
+  .kartis { border: none; padding: 0; }
+  th { position: static; }
+}

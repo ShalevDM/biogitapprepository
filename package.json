@@ -1,0 +1,14 @@
+{
+  "name": "shibutz-tzevet-mitbach",
+  "version": "1.0.0",
+  "description": "שיבוץ צוות מטבח למשמרות",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node --no-warnings src/server.js",
+    "seed": "node --no-warnings scripts/seed.js",
+    "demo": "node --no-warnings scripts/demo.js",
+    "test": "node --no-warnings --test"
+  }
+}
