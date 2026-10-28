@@ -1,17 +1,13 @@
 // בדיקת שיבוץ: הפרות (כללים קשיחים) ואזהרות (כללים רכים). רצה אחרי יצירה ואחרי כל עריכה ידנית.
 import { TAGIOT, MESIMOT, EMDOT, TAFKIDIM } from '../munachim.js';
 import { dakotLeshaa, shaotTxt } from '../zman.js';
-import { bdokZug, hu88, menuchaNidreshet, sofMenucha } from './kshichim.js';
+import { bdokZug, hu88, menuchaNidreshet, sofMenucha, mataimTafkid } from './kshichim.js';
 
 function tavitEmda(e) {
   const sh = e.shem_mishmeret ? ` ${e.shem_mishmeret}` : ` ${dakotLeshaa(e.hatchala)}\u200E–\u200E${dakotLeshaa(e.siyum)}`;
   return `${MESIMOT[e.mesima]}${sh}`;
 }
 
-function mataimTafkid(o, e) {
-  if (e.tafkid === 'pas_kar') return o.tafkid !== 'minhalan' && (o.bemaagar || o.tafkid === 'tabach');
-  return o.tafkid === e.tafkid;
-}
 
 export function bdika(hx, emdot, dgalim) {
   const h = hx.h;
@@ -33,7 +29,7 @@ export function bdika(hx, emdot, dgalim) {
     const o = hx.byId.get(e.oved_id);
     if (!o) { haf('oved', `${tavitEmda(e)}: עובד לא קיים`, [e.id]); continue; }
     if (!o.nimtza && !e.butza) haf('status', `${o.shem} מסומן "בחופש" אבל משובץ ל${tavitEmda(e)}`, [e.id], o.id);
-    if (!mataimTafkid(o, e)) {
+    if (!mataimTafkid(o, e, h)) {
       const lama = o.tafkid === 'minhalan' ? 'מנהלן משובץ רק למשימת "מנהל"'
         : e.tafkid === 'pas_kar' ? 'פס קר מאויש ממאגר פס קר או מטבחים'
           : `העמדה דורשת ${TAFKIDIM[e.tafkid]}`;

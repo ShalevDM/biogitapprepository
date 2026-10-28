@@ -2,7 +2,7 @@
 import { TAGIOT, MESIMOT, EMDOT, TAFKIDIM } from '../munachim.js';
 import { shaotTxt, dakotLeshaa } from '../zman.js';
 import { tzorEmdot, shlavTzevet } from './mishmarot.js';
-import { bdokOved, hu88 } from './kshichim.js';
+import { bdokOved, hu88, mataimTafkid } from './kshichim.js';
 import { huLayla } from './hogenut.js';
 
 const cmp = (a, b) => {
@@ -88,8 +88,12 @@ export class Bone {
   }
 
   mataimTafkid(o, e) {
-    if (e.tafkid === 'pas_kar') return o.tafkid !== 'minhalan' && (o.bemaagar || o.tafkid === 'tabach');
-    return o.tafkid === e.tafkid;
+    return mataimTafkid(o, e, this.h);
+  }
+
+  // שף בעמדת טבח: מותר, אבל אחרי טבחים באותה שכבת עדיפות
+  shefKotabach(o, e) {
+    return o.tafkid === 'shef' && e.tafkid !== 'shef';
   }
 
   sofKodem(ovedId, e) {
@@ -123,8 +127,9 @@ export class Bone {
       if (this.yomMenuchaMale.some((y) => y.oved_id === o.id)) { nifsalim.push({ o, siba: 'ביום מנוחה מלא' }); continue; }
       const p = this.bdok(o.id, e);
       if (p) { nifsalim.push({ o, siba: p }); continue; }
-      const t = shichva(o);
+      let t = shichva(o);
       if (t.dchiya) { nifsalim.push({ o, siba: t.dchiya }); continue; }
+      if (this.shefKotabach(o, e)) t = { t: t.t + 0.01, l: `${t.l} · שף כטבח` };
       ok.push({ o, t, k: mafteach(o) });
     }
     ok.sort((a, b) => a.t.t - b.t.t || cmp(a.k, b.k) || a.o.id - b.o.id);
@@ -163,7 +168,11 @@ export class Bone {
 
       for (const tafkid of ['shef', 'tabach']) {
         const pnuyot = emdot.filter((e) => e.tafkid === tafkid && !e.oved_id);
+        // עמדות טבח: קודם טבחי הצוות, אחר כך שף נוסף בצוות (אם שף יכול לשמש כטבח)
         let mi = chaverim.filter((o) => o.tafkid === tafkid);
+        if (tafkid === 'tabach' && this.h.shef_kotabach) {
+          mi = [...mi, ...chaverim.filter((o) => o.tafkid === 'shef' && !emdot.some((e) => e.oved_id === o.id))];
+        }
         let menuchaTxt = '';
         if (mesima === 'hachanot' && tafkid === 'tabach' && mi.length > pnuyot.length) {
           // מנוחה מורחבת ניתנת למי שקיבל הכי מעט לאחרונה; בשוויון — למי שעבד הכי הרבה בהכנות לאחרונה

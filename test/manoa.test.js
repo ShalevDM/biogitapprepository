@@ -208,3 +208,32 @@ test('שירות: נוכחות → טיוטה → נעילה → שבץ מחדש
   assert.equal(s5.emdot.find((e) => e.mesima === 'pas_cham' && e.shem_mishmeret === 'בוקר').tzevet_id, tzevet2, 'הרוטציה ממשיכה');
   assert.ok(sherut.yetzu(PTIHA).includes('*פס חם*'));
 });
+
+function hosefShef(ovdim) {
+  ovdim.push({ id: 200, shem: 'שף נוסף', tafkid: 'shef', tagiot: [], status: 'nimtza', tzevet_id: null, bemaagar_pas_kar: 0, seder: 0 });
+}
+
+test('שף יכול לשמש כטבח: שף ללא צוות משלים חוסר טבח בפס חם', () => {
+  const { out } = harez({ yamim: 2, chaserim: ['יוסי'], shinuy: hosefShef });
+  for (const r of out) {
+    assert.deepEqual(r.hafarot, []);
+    const kotabach = r.emdot.filter((e) => e.oved_id === 200 && e.tafkid !== 'shef');
+    assert.ok(kotabach.length > 0, 'השף שובץ לעמדת טבח');
+    assert.ok(kotabach.some((e) => e.nimuk.derug.includes('שף כטבח')));
+    for (const key of new Set(r.emdot.filter((e) => e.mesima === 'pas_cham').map((e) => e.mishmeret))) {
+      assert.equal(r.emdot.filter((e) => e.mishmeret === key && e.tafkid === 'shef').length, 1, 'עמדת שף אחת בפס חם');
+    }
+  }
+});
+
+test('שף יכול לשמש כטבח — כבוי: שף לא משובץ לעמדת טבח, ושיבוץ ידני כזה הוא הפרה', () => {
+  const hagdarot = { shef_kotabach: false };
+  const { ovdim, tzevatim, out, nochechut } = harez({ yamim: 1, chaserim: ['יוסי'], shinuy: hosefShef, hagdarot });
+  const r = out[0];
+  assert.ok(!r.emdot.some((e) => e.oved_id === 200 && e.tafkid !== 'shef'));
+  const emdot = structuredClone(r.emdot);
+  const pk = emdot.find((e) => e.mesima === 'pas_kar' && dakotLeshaa(e.hatchala) === '06:00');
+  pk.oved_id = 200;
+  const hx = bneHeksher({ taarich: PTIHA, hagdarot, ovdim, tzevatim, historia: [], nochechut });
+  assert.ok(bdika(hx, emdot, r.dgalim).hafarot.some((h) => h.sug === 'tafkid' && h.oved_id === 200));
+});

@@ -19,6 +19,9 @@ export const HAGDAROT_BRIRAT_MECHDAL = {
   // הכנת שחר: צוות הבוקר של פס חם מתחיל בפועל בשעה זו
   hachanat_shachar: { pail: true, mishmeret: 0, shaa: '04:45' },
 
+  // שף יכול לשמש גם כטבח (בעמדות טבח, בפס קר ובמנהל). עמדת השף נשארת: שף אחד בדיוק בפס חם א.
+  shef_kotabach: true,
+
   // הכנות: באותן שעות של משמרות פס חם
   hachanot: { shef: 1, tabach: 3 },
 

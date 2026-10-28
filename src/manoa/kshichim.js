@@ -53,6 +53,14 @@ export function bdokOved(mishmarotOved, x, h, dgalim) {
   return null;
 }
 
+// התאמת תפקיד בסיס לעמדה
+export function mataimTafkid(o, e, h) {
+  const tabach = o.tafkid === 'tabach' || (o.tafkid === 'shef' && !!h.shef_kotabach);
+  if (e.tafkid === 'pas_kar') return o.tafkid !== 'minhalan' && (o.bemaagar || tabach);
+  if (e.tafkid === 'tabach') return tabach;
+  return o.tafkid === e.tafkid;
+}
+
 // מחזור 8/8: פס חם שמתחיל או מסתיים פחות מ-16 שעות מפס חם אחר
 export function hu88(mishmarotOved, x) {
   if (x.mesima !== 'pas_cham') return false;

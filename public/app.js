@@ -476,7 +476,9 @@ function ptachEmda(s, id) {
   const o = e.oved_id ? oved(e.oved_id) : null;
   const n = e.nimuk || {};
   const mataim = K.ovdim.filter((x) => {
-    if (e.tafkid === 'pas_kar') return x.tafkid !== 'minhalan' && (x.bemaagar_pas_kar || x.tafkid === 'tabach');
+    const tabach = x.tafkid === 'tabach' || (x.tafkid === 'shef' && K.hagdarot.shef_kotabach);
+    if (e.tafkid === 'pas_kar') return x.tafkid !== 'minhalan' && (x.bemaagar_pas_kar || tabach);
+    if (e.tafkid === 'tabach') return tabach;
     return x.tafkid === e.tafkid;
   }).sort((a, b) => a.shem.localeCompare(b.shem, 'he'));
   const mesubatzim = new Set(s.emdot.filter((x) => x.oved_id && x.hatchala < e.siyum && e.hatchala < x.siyum && x.id !== e.id).map((x) => x.oved_id));
@@ -502,7 +504,7 @@ function ptachEmda(s, id) {
       <div class="shura">
         <label>החלף ל: <select id="machlif" ${e.butza ? 'disabled' : ''}>
           <option value="">— לא מאויש —</option>
-          ${mataim.map((x) => `<option value="${x.id}" ${x.id === e.oved_id ? 'selected' : ''}>${esc(x.shem)} · ${esc(shiyuch(x))}${x.status === 'bechofesh' ? ' · בחופש' : ''}${mesubatzim.has(x.id) ? ' · משובץ במקביל' : ''}</option>`).join('')}
+          ${mataim.map((x) => `<option value="${x.id}" ${x.id === e.oved_id ? 'selected' : ''}>${esc(x.shem)}${x.tafkid === 'shef' && e.tafkid !== 'shef' ? ' (שף)' : ''} · ${esc(shiyuch(x))}${x.status === 'bechofesh' ? ' · בחופש' : ''}${mesubatzim.has(x.id) ? ' · משובץ במקביל' : ''}</option>`).join('')}
         </select></label>
         <label><input type="checkbox" id="naul" ${e.naul ? 'checked' : ''}> נעילה (נשמר ביצירה מחדש ובשיבוץ מחדש)</label>
       </div>
@@ -717,8 +719,8 @@ async function masachPtiha() {
     const shlavim = shlaveiMachzor(n);
     const tafus = new Set(st.tzevatim.flatMap((t) => t.chaverim));
     const optziot = (tafkid, nochechi) => `<option value="">—</option>` + K.ovdim
-      .filter((o) => o.tafkid === tafkid && (!tafus.has(o.id) || o.id === nochechi))
-      .map((o) => `<option value="${o.id}" ${o.id === nochechi ? 'selected' : ''}>${esc(o.shem)}${o.tagiot.length ? ' · ' + o.tagiot.map((t) => M().TAGIOT[t]).join(', ') : ''}</option>`).join('');
+      .filter((o) => (o.tafkid === tafkid || (tafkid === 'tabach' && o.tafkid === 'shef' && K.hagdarot.shef_kotabach)) && (!tafus.has(o.id) || o.id === nochechi))
+      .map((o) => `<option value="${o.id}" ${o.id === nochechi ? 'selected' : ''}>${esc(o.shem)}${o.tafkid !== tafkid ? ' (שף)' : ''}${o.tagiot.length ? ' · ' + o.tagiot.map((t) => M().TAGIOT[t]).join(', ') : ''}</option>`).join('');
     main.innerHTML = `
       <h1>מצב פתיחה</h1>
       <div class="kartis chalash">מזינים פעם אחת את השיבוץ הקבוע הקיים: מי בכל צוות, איפה כל צוות נמצא כרגע במחזור, מי במאגר פס קר. המערכת ממשיכה מהמצב הזה ולא מתחילה מאפס. מחזור הצוות: פס חם (8 ש') → מנוחה (8 ש') → הכנות (8 ש') → מנוחה (8 ש').</div>
@@ -732,9 +734,14 @@ async function masachPtiha() {
           <div class="tzevet-kartis">
             <div class="shura"><input data-shem="${ti}" value="${esc(t.shem)}" style="flex:1"><button class="sakana" data-hasar="${ti}" title="הסרת צוות">✕</button></div>
             <label>מיקום במחזור: <select data-shlav="${ti}">${shlavim.map((s, i) => `<option value="${i}" ${Number(t.shlav) === i ? 'selected' : ''}>${esc(M().SHLAVEI_MACHZOR[s])}</option>`).join('')}</select></label>
-            <div style="margin-top:6px">שף: <select data-chaver="${ti}:0" data-tafkid="shef">${optziot('shef', t.chaverim.find((id) => oved(id)?.tafkid === 'shef'))}</select></div>
             ${(() => {
-              const tab = t.chaverim.filter((id) => oved(id)?.tafkid === 'tabach');
+              const shefId = t.chaverim.find((id) => oved(id)?.tafkid === 'shef');
+              const tab = t.chaverim.filter((id) => id !== shefId);
+              return `<div style="margin-top:6px">שף: <select data-chaver="${ti}:0" data-tafkid="shef">${optziot('shef', shefId)}</select></div>`;
+            })()}
+            ${(() => {
+              const shefId = t.chaverim.find((id) => oved(id)?.tafkid === 'shef');
+              const tab = t.chaverim.filter((id) => id !== shefId);
               const slots = Math.max(tabachimBatzevet, tab.length + 0);
               return Array.from({ length: slots }, (_, i) => `<div>טבח ${i + 1}: <select data-chaver="${ti}:${i + 1}" data-tafkid="tabach">${optziot('tabach', tab[i])}</select></div>`).join('');
             })()}
@@ -828,6 +835,7 @@ async function masachHagdarot() {
           <h3>פס חם</h3>
           ${H.pas_cham.emdot.map((e, i) => `<div class="sade"><span>${esc(M().EMDOT[e.emda])}</span><span>שף <input type="number" min="0" data-p="pas_cham.emdot.${i}.shef" value="${e.shef}"> טבחים <input type="number" min="0" data-p="pas_cham.emdot.${i}.tabach" value="${e.tabach}"></span></div>`).join('')}
           <div class="chalash">חובה: שף אחד בדיוק, ותמיד בפס חם א.</div>
+          ${bool('shef_kotabach', 'שף יכול לשמש גם כטבח (בעמדות טבח, בפס קר ובמנהל)')}
           <h3>הכנות</h3>
           ${num('hachanot.shef', 'שפים')}
           ${num('hachanot.tabach', 'טבחים')}
